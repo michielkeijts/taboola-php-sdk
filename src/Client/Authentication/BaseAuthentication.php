@@ -7,7 +7,9 @@
 
 namespace TaboolaApi\Client\Authentication;
 
-abstract class AuthenticationInterface {
+use TaboolaApi\Vault\NullVault;
+
+abstract class BaseAuthentication {
     /**
      * To use a vault to store an acces token when obtained
      * @var TaboolaApi\Vault\VaultInterface
@@ -30,12 +32,16 @@ abstract class AuthenticationInterface {
     public function __construct(string $client_id, string $client_secret, string $username = "", string $password = "", array $options = []) 
     {
         $this->client_id = $client_id;
-        $this->client_id = $client_secret;
+        $this->client_secret = $client_secret;
         $this->username = $username;
         $this->password = $password;
         
+        if (!isset($options['Vault'])) {
+            $options['Vault'] = [];
+        }
+        
         $options['Vault'] = [
-            'className' => 'TaboolaApi\Vault\NullVault'
+            'className' => NullVault::class
         ] + $options['Vault'];
         
         $this->createVault($options['Vault']);
@@ -47,7 +53,10 @@ abstract class AuthenticationInterface {
      * Authenticate. Should return the AccesToken
      * @return string
      */
-    public function Authenticate() : string;
+    public function Authenticate() : string
+    {
+        return "";
+    }
     
     /**
      * Gets the access token. Checks if it is still valid. 
@@ -93,9 +102,9 @@ abstract class AuthenticationInterface {
      */
     private function createVault(array $options = []) 
     {
-        $vault = new $options['Vault']();
+        $this->vault = new $options['className']();
         
-        $vault->applyOptions($options['Vault']);
+        $this->vault->applyOptions($options);
         
         return $this->vault;
     }

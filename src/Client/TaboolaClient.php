@@ -9,10 +9,11 @@
 namespace TaboolaApi\Client;
 
 use GuzzleHttp\Client;
-use TaboolaApi\Client\Authentication\AuthenticationInterface;
-use TaboolaApi\Client\ClientCredentialsAuthentication;
-use TaboolaApi\Client\PasswordAuthentication;
+use TaboolaApi\Client\Authentication\BaseAuthentication;
+use TaboolaApi\Client\Authentication\ClientCredentialsAuthentication;
+use TaboolaApi\Client\Authentication\PasswordAuthentication;
 use Psr\Http\Message\ResponseInterface;
+use TaboolaApi\Client\Responses\Response;
 
 /**
  * For full list of fields see
@@ -25,7 +26,7 @@ class TaboolaClient {
      * The 1.0 endpoint
      * @var string
      */
-    private $_api_url = " https://backstage.taboola.com/backstage/api/1.0";
+    private $_api_url = "https://backstage.taboola.com/backstage/api/1.0/";
     /**
      * 
      * @var AuthenticationInterface
@@ -37,6 +38,12 @@ class TaboolaClient {
      * @var Client; 
      */
     private $_client;
+    
+    /**
+     *
+     * @var integer
+     */
+    private $max_retries = 3;
     
     /**
      * @param array $options
@@ -60,9 +67,11 @@ class TaboolaClient {
         }
         
         // set defaults
-        $options = $options + ['username' => "", 'password' => "", "client_id" => "", "client_secret"=>""];
+        $options = $options + ['username' => "", 'password' => "", "client_id" => "", "client_secret"=>"", "max_retries"=>3];
         
         $this->_authentication = new $options['className']($options['client_id'],$options['client_secret'],$options['username'],$options['password'], $options);
+        
+        $this->max_retries = $options['max_retries'];
     }
     
     /**
@@ -70,14 +79,8 @@ class TaboolaClient {
      * @param string $endpoint
      * @param array $data
      */
-    public function doRequest(string $endpoint, array $data = [], string $method = 'post', bool $raw = FALSE)
+    public function doRequest(string $endpoint, $data = "", string $method = 'post', bool $raw = FALSE)
     {
-        $client = $this->getClient();
-        
-        if (!method_exists($client, $method)) {
-            throw new Exception("Invalid or unsupported HTTP method");
-        }
-        
         $i=0;
         while ($i++ < $this->max_retries) {
             $response = $this->execute($endpoint, $data, $method);
@@ -94,7 +97,7 @@ class TaboolaClient {
             return $response;
         }
         
-        return $this->parseResponse($response);
+        return new Response($response);
     }
     
     /**
@@ -104,18 +107,24 @@ class TaboolaClient {
      * @param string $method
      * @return ResponseInterface
      */
-    private function execute(string $endpoint, array $data = [], string $method) : ResponseInterface
+    private function execute(string $endpoint, $data = "", string $method) : ResponseInterface
     {
+        $client = $this->getClient();
+        $options = [];
         if (!isset($options['headers'])) {
             $options['headers'] = [];
         }
         
         $options['headers'] = $options['headers'] + [
-            'Authentication' => 'Bearer ' . $this->getAuthentication()->getAccesToken(),
+            'Authorization' => 'Bearer ' . $this->getAuthentication()->getAccesToken(),
             'Content-Type' => 'application/json'
         ];
         
-        $options['body'] = $data;
+        if (is_array($data)) {
+            $options['form_params'] = $data;
+            $options['headers']['Content-Type'] = 'application/x-www-form-urlencoded';
+        }
+        
                 
         $response = call_user_func_array([$client, $method], [$endpoint, $options]);
         
@@ -137,9 +146,9 @@ class TaboolaClient {
    
     /**
      * 
-     * @return AuthenticationInterface
+     * @return BaseAuthentication
      */
-    private function getAuthentication() : AuthenticationInterface
+    private function getAuthentication() : BaseAuthentication
     {
         return $this->_authentication;
     }

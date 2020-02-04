@@ -5,13 +5,13 @@
  * @Licence MIT
  */
 
-namespace TaboolaApi\Client;
+namespace TaboolaApi\Client\Authentication;
 
-use TaboolaApi\Client\Authentication\AuthenticationInterface;
+use TaboolaApi\Client\Authentication\BaseAuthentication;
 use TaboolaApi\Exceptions\InvalidCredentialsException;
 use GuzzleHttp\Client;
 
-class PasswordAuthentication implements AuthenticationInterface {
+class PasswordAuthentication extends BaseAuthentication {
     
     private $url = 'https://backstage.taboola.com/backstage/oauth/token';
     

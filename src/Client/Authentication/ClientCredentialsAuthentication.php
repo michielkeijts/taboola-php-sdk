@@ -5,13 +5,13 @@
  * @Licence MIT
  */
 
-namespace TaboolaApi\Client;
+namespace TaboolaApi\Client\Authentication;
 
-use TaboolaApi\Client\Authentication\AuthenticationInterface;
+use TaboolaApi\Client\Authentication\BaseAuthentication;
 use TaboolaApi\Exceptions\InvalidCredentialsException;
 use GuzzleHttp\Client;
 
-class ClientCredentialsAuthentication implements AuthenticationInterface {
+class ClientCredentialsAuthentication extends BaseAuthentication {
     
     private $url = 'https://backstage.taboola.com/backstage/oauth/token';
     
@@ -21,9 +21,9 @@ class ClientCredentialsAuthentication implements AuthenticationInterface {
         
         $response = $client->post($this->url, [
             'headers'=> [
-                'content-type'=> 'application/json'
+
             ],
-            'body' => [
+            'form_params' => [
                 'client_id' => $this->client_id,
                 'client_secret' => $this->client_secret,
                 'grant_type' => "client_credentials"
@@ -38,7 +38,7 @@ class ClientCredentialsAuthentication implements AuthenticationInterface {
         $jsonBody = json_decode($stringBody);
         
         if (json_last_error() === JSON_ERROR_NONE) {
-            return $jsonBody['access_token'];
+            return $jsonBody->access_token;
         }
         
         throw new InvalidResponseBody("Expected a JSON body: ". json_last_error_msg());
