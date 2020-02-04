@@ -3,7 +3,7 @@
 	"type": "php-sdk",
 	"description": "This SDK tries to provide a PHP SDK  for the connection with the Taboola API.",
 	"keywords": ["sdk","taboola"],
-	"homepage": "http://github.com/michielkeijts/taboola-php-sdk,
+	"homepage": "http://github.com/michielkeijts/taboola-php-sdk",
 	"license": "MIT",
 	"authors": [
 		{
