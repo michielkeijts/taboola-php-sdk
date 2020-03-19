@@ -10,7 +10,7 @@ namespace TaboolaApi\Client\Requests;
 
 use TaboolaApi\Client\Requests\BaseRequest;
 
-class TaboolaAccountRequest extends BaseRequest {
+class TaboolaCampaignRequest extends BaseRequest {
     /**
      * The Endpoint URL
      * @var string 
