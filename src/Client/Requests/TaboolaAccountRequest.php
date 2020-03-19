@@ -22,4 +22,14 @@ class TaboolaAccountRequest extends BaseRequest {
     {
         return $this->request();
     }
+    
+    /**
+     * Get the Advertiser accounts, which are account
+     * @param string $account
+     * @return type
+     */
+    public function getAdvertisers(string $account_id) 
+    {
+        return $this->request("get", "", $account_id . '/advertisers');
+    }
 }

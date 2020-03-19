@@ -67,8 +67,8 @@ class Response {
         
         if (isset($this->responseContent->metadata)) {
             $this->results = $this->responseContent->results;
-            $this->count = $this->responseContent->count;
-            $this->total = $this->responseContent->total;
+            $this->count = $this->responseContent->metadata->count;
+            $this->total = $this->responseContent->metadata->total;
         } else {
             $this->results = [$this->responseContent];
             $this->count = 1;
