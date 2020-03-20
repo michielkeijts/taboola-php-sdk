@@ -21,4 +21,14 @@ class TaboolaCampaignRequest extends BaseRequest {
     {
         return $this->request('get',"", sprintf($this->endpoint, $account_id));
     }
+    
+    public function createCampaign(string $account_id, array $data) 
+    {
+        return $this->request('post', $data, sprintf($this->endpoint, $account_id));
+    }
+    
+    public function updateCampaign(string $account_id, string $id, array $data) 
+    {
+        return $this->request('post', $data, sprintf($this->endpoint . DS . '%s', $account_id, $id));
+    }
 }

@@ -14,6 +14,7 @@ use TaboolaApi\Client\Authentication\ClientCredentialsAuthentication;
 use TaboolaApi\Client\Authentication\PasswordAuthentication;
 use Psr\Http\Message\ResponseInterface;
 use TaboolaApi\Client\Responses\Response;
+use Exception;
 
 /**
  * For full list of fields see
@@ -123,10 +124,15 @@ class TaboolaClient {
         if (is_array($data)) {
             $options['form_params'] = $data;
             $options['headers']['Content-Type'] = 'application/x-www-form-urlencoded';
+        } elseif(!empty($data)) {
+            $options['body'] = $data;
         }
         
-                
-        $response = call_user_func_array([$client, $method], [$endpoint, $options]);
+        try {
+            $response = call_user_func_array([$client, $method], [$endpoint, $options]);
+        } catch (Exception $e) {
+            echo "";
+        }
         
         return $response;
     }
@@ -138,7 +144,13 @@ class TaboolaClient {
     private function getClient() : Client
     {
         if (empty($this->_client)) {
-            $this->_client = new Client(['base_uri'=>$this->_api_url, 'timeout'=>60, 'allow_redirects'=>true]);
+            $this->_client = new Client([
+                'base_uri'=>$this->_api_url, 
+                'timeout'=>60, 
+                'allow_redirects'=>true,
+                'http_errors' => false,
+                CURLOPT_FAILONERROR => 0
+            ]);
         }
         
         return $this->_client;
