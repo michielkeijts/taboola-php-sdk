@@ -70,9 +70,16 @@ class Response {
             $this->count = $this->responseContent->metadata->count;
             $this->total = $this->responseContent->metadata->total;
         } else {
-            $this->results = [$this->responseContent];
-            $this->count = 1;
-            $this->total = 1;
+            if (isset($this->responseContent->http_status) && $this->responseContent->http_status !== 200) {
+                $this->results = [];
+                $this->count = 0;
+                $this->total = 0;
+                $this->message= $this->responseContent->message;
+            } else {
+                $this->results = [$this->responseContent];
+                $this->count = 1;
+                $this->total = 1;
+            }
         }
     }
 }
