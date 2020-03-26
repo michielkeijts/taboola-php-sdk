@@ -50,6 +50,61 @@ class Response {
         $this->parseResponse($original);
     }
     
+    public function getStatusCode()
+    {
+        return $this->original->getStatusCode();
+    }
+    
+    /**
+     * Return a result or empty array
+     * @param int $id (default -1, return all results)
+     * @return array
+     */
+    public function getResults($id = -1)
+    {
+        if ($id < 0) {
+            return $this->results;
+        }
+        
+        if (!array_key_exists($id, $this->results)) {
+            return [];
+        }
+        
+        return $this->results[$id];
+    }
+    
+    /**
+     * Return the messag
+     * @return string
+     */
+    public function getErrorMessage() :string
+    {
+        $message = "";
+        if (isset($this->responseContent) && isset($this->responseContent->message)) {
+            $message = $this->responseContent->message;
+        }
+        
+        return $message;
+    }
+    
+    /**
+     * Return errors per field: field=>$message
+     * @return array
+     */
+    public function getErrors() : array
+    {
+        $errors = [];
+        if (isset($this->responseContent) && isset($this->responseContent->message)) {
+            if (isset($this->responseContent->offending_field)) {
+                $errors[$this->responseContent->offending_field] = [$this->responseContent->message];
+            } else {
+                $errors[] = $this->responseContent->message;
+            }
+        }
+        
+        return $errors;
+    }
+    
     /**
      * Parse the response
      * @param ResponseInterface $original
