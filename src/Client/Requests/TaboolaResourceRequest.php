@@ -24,6 +24,15 @@ class TaboolaResourceRequest extends BaseRequest {
      */
     public function getCountries() 
     {
-        return $this->request("get","",$this->endpoint. '/countries');
+        return $this->getResource('countries');
+    }
+    
+    /**
+     * Get a list of available dictionary items
+     * @return response
+     */
+    public function getResource(string $name) 
+    {
+        return $this->request("get","",$this->endpoint. '/' . $name);
     }
 }

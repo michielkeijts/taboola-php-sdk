@@ -42,6 +42,11 @@ class TaboolaCampaignRequest extends BaseRequest {
         return $this->request('delete', "", sprintf($this->endpoint . DS . '%s', $account_id, $campaign_id));
     }
     
+    public function duplicateCampaign(string $account_id, string $campaign_id, $data = "") 
+    {
+        return $this->request('post', $data, sprintf($this->endpoint . DS . '%s/duplicate', $account_id, $campaign_id));
+    }
+    
     public function getCampaignItems(string $account_id, string $campaign_id)
     {
         return $this->request('get', "", sprintf($this->endpoint . DS . '%s/items', $account_id, $campaign_id));
