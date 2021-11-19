@@ -34,7 +34,7 @@ abstract class BaseRequest {
     {
         $endpoint = empty($endpoint) ? $this->endpoint : $endpoint;
         
-        if (!empty($data)) {
+        if (!empty($data) && $method!=='get') {
             $data = json_encode($data);
         }
         

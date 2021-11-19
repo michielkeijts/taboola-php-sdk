@@ -121,11 +121,17 @@ class TaboolaClient {
             'Content-Type' => 'application/json'
         ];
         
-        if (is_array($data)) {
-            $options['form_params'] = $data;
-            $options['headers']['Content-Type'] = 'application/x-www-form-urlencoded';
-        } elseif(!empty($data)) {
-            $options['body'] = $data;
+        if ($method !== 'get') {
+            if (is_array($data) && $method !== 'get') {
+                $options['form_params'] = $data;
+                $options['headers']['Content-Type'] = 'application/x-www-form-urlencoded';
+            } elseif(!empty($data)) {
+                $options['body'] = $data;
+            }
+        } else {
+            if (!empty($data)) {
+                $options['query'] = $data;
+            }
         }
         
         try {

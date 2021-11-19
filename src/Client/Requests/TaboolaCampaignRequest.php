@@ -22,6 +22,11 @@ class TaboolaCampaignRequest extends BaseRequest {
         return $this->request('get',"", sprintf($this->endpoint, $account_id));
     }
     
+    public function getAllCampaigns(string $account_id, int $page = 1, int $page_size = 100) 
+    {
+        return $this->request('get',['page'=>$page, 'page_size'=>$page_size], sprintf($this->endpoint . 'base', $account_id));
+    }
+    
     public function getCampaign(string $account_id, int $id) 
     {
         return $this->request('get',"", sprintf($this->endpoint. '%d', $account_id, $id));
@@ -42,9 +47,14 @@ class TaboolaCampaignRequest extends BaseRequest {
         return $this->request('delete', "", sprintf($this->endpoint . DS . '%s', $account_id, $campaign_id));
     }
     
-    public function duplicateCampaign(string $account_id, string $campaign_id, array $data = []) 
+    public function duplicateCampaign(string $account_id, string $campaign_id, array $data = [], string $destination_advertiser_id = "") 
     {
-        return $this->request('post', $data, sprintf($this->endpoint . DS . '%s/duplicate', $account_id, $campaign_id));
+        // see https://developers.taboola.com/backstage-api/reference#duplicate-a-campaign if 
+        // duplicating to different advertiser, use query parameter
+        if ($destination_advertiser_id  !== $account_id) {
+            $destination_advertiser_id = '?destination_account=' . $destination_advertiser_id;
+        }
+        return $this->request('post', $data, sprintf($this->endpoint . DS . '%s/duplicate%s', $account_id, $campaign_id, $destination_advertiser_id));
     }
     
     public function getCampaignItems(string $account_id, string $campaign_id)
