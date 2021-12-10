@@ -51,10 +51,12 @@ class TaboolaCampaignRequest extends BaseRequest {
     {
         // see https://developers.taboola.com/backstage-api/reference#duplicate-a-campaign if 
         // duplicating to different advertiser, use query parameter
-        if ($destination_advertiser_id  !== $account_id) {
+        if (!empty($destination_advertiser_id) && $destination_advertiser_id  !== $account_id) {
             $destination_advertiser_id = '?destination_account=' . $destination_advertiser_id;
+        } else {
+            $destination_advertiser_id = "";
         }
-        return $this->request('post', $data, sprintf($this->endpoint . DS . '%s/duplicate%s', $account_id, $campaign_id, $destination_advertiser_id));
+        return $this->request('post', $data, sprintf($this->endpoint .  '%s/duplicate%s', $account_id, $campaign_id, $destination_advertiser_id));
     }
     
     public function getCampaignItems(string $account_id, string $campaign_id)
