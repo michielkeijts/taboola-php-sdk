@@ -9,6 +9,7 @@ namespace TaboolaApi\Client\Authentication;
 
 use TaboolaApi\Client\Authentication\BaseAuthentication;
 use TaboolaApi\Exceptions\InvalidCredentialsException;
+use TaboolaApi\Exceptions\InvalidResponseBody;
 use GuzzleHttp\Client;
 
 class ClientCredentialsAuthentication extends BaseAuthentication {
