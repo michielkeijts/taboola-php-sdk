@@ -1,7 +1,7 @@
 <?php
-/* 
+/*
  * @copyright (C) 2020 Michiel Keijts, Normit
- * 
+ *
  */
 
 
@@ -17,44 +17,46 @@ class Response {
      * @var ResponseInterface
      */
     private $original;
-    
+
     /**
-     * 
+     *
      * stdClass
      */
     public $responseContent;
-    
+
     /**
      * @var array
      */
     public $results = [];
-    
+
     /**
      * Number of results in total
      * @var integer
      */
     public $total = 0;
-            
+
     /**
      * Number of reults in this set
      * @var integer
      */
     public $count = 0;
-        
+
+    public $message = "";
+
     /**
-     * 
+     *
      * @param ResponseInterface $original
      */
     public function __construct(ResponseInterface $original) {
         $this->original = $original;
         $this->parseResponse($original);
     }
-    
+
     public function getStatusCode()
     {
         return $this->original->getStatusCode();
     }
-    
+
     /**
      * Return a result or empty array
      * @param int $id (default -1, return all results)
@@ -65,14 +67,14 @@ class Response {
         if ($id < 0) {
             return $this->results;
         }
-        
+
         if (!array_key_exists($id, $this->results)) {
             return [];
         }
-        
+
         return $this->results[$id];
     }
-    
+
     /**
      * Return the messag
      * @return string
@@ -83,10 +85,10 @@ class Response {
         if (isset($this->responseContent) && isset($this->responseContent->message)) {
             $message = $this->responseContent->message;
         }
-        
+
         return $message;
     }
-    
+
     /**
      * Return errors per field: field=>$message
      * @return array
@@ -101,25 +103,24 @@ class Response {
                 $errors[] = $this->responseContent->message;
             }
         }
-        
+
         return $errors;
     }
-    
+
     /**
      * Parse the response
      * @param ResponseInterface $original
-     * @return type
      */
     private function parseResponse (ResponseInterface $original)
     {
         $body = $original->getBody()->getContents();
-        
+
         $this->responseContent = json_decode($body);
-        
+
         if (json_last_error() !== JSON_ERROR_NONE) {
             return;
         }
-        
+
         if (isset($this->responseContent->metadata)) {
             $this->results = $this->responseContent->results;
             $this->count = $this->responseContent->metadata->count;
