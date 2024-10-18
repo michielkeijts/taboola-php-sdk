@@ -113,6 +113,7 @@ class Response {
      */
     private function parseResponse (ResponseInterface $original)
     {
+        $original->getBody()->rewind();
         $body = $original->getBody()->getContents();
 
         $this->responseContent = json_decode($body);
