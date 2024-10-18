@@ -80,7 +80,7 @@ class TaboolaClient {
      * @param string $endpoint
      * @param array $data
      */
-    public function doRequest(string $endpoint, $data = "", string $method = 'post', bool $raw = FALSE)
+    public function doRequest(string $endpoint, $data = "", string $method = 'post', bool $raw = FALSE) : Response
     {
         $i=0;
 
@@ -95,8 +95,8 @@ class TaboolaClient {
             }
         }
 
-        if (!isset($response) || $response instanceof ResponseInterface) {
-            return;
+        if (!isset($response) || !($response instanceof ResponseInterface)) {
+            return new Response(new \Cake\Http\Client\Response());
         }
 
         if ($raw) {
